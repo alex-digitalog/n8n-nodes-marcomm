@@ -1,0 +1,57 @@
+{
+  "name": "n8n-nodes-marcomm",
+  "version": "0.1.0",
+  "description": "n8n community nodes for Marcomm AI: write and publish press releases, blog posts, press events and RSVP invitations, and trigger workflows when they change.",
+  "keywords": [
+    "n8n-community-node-package",
+    "marcomm",
+    "press release",
+    "newsroom",
+    "blog",
+    "press event",
+    "corporate communications"
+  ],
+  "license": "MIT",
+  "homepage": "https://marcomm.works/developers",
+  "author": {
+    "name": "Digitalog",
+    "email": "help@digitalog.ai"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alex-digitalog/n8n-nodes-marcomm.git"
+  },
+  "engines": {
+    "node": ">=20.15"
+  },
+  "scripts": {
+    "build": "node scripts/clean.mjs && tsc -p tsconfig.build.json && node scripts/copy-assets.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "n8n-node lint",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "strict": true,
+    "credentials": [
+      "dist/credentials/MarcommApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/Marcomm/Marcomm.node.js",
+      "dist/nodes/MarcommTrigger/MarcommTrigger.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@n8n/node-cli": "^0.56.3",
+    "@types/node": "^22",
+    "n8n-workflow": "^2.16.0",
+    "typescript": "^5",
+    "vitest": "^5.1.0"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  }
+}

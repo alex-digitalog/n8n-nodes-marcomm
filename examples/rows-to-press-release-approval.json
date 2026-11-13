@@ -1,0 +1,61 @@
+{
+  "name": "Spreadsheet rows to press release drafts and approval requests",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "5a1c2f10-0000-4000-8000-000000000011",
+      "name": "When clicking Test workflow",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "documentId": { "__rl": true, "value": "", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "", "mode": "name" },
+        "options": {}
+      },
+      "id": "5a1c2f10-0000-4000-8000-000000000012",
+      "name": "Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [240, 0]
+    },
+    {
+      "parameters": {
+        "resource": "pressRelease",
+        "operation": "create",
+        "title": "={{ $json.Title }}",
+        "body": "={{ $json.Body }}",
+        "additionalFields": { "language": "en" }
+      },
+      "id": "5a1c2f10-0000-4000-8000-000000000013",
+      "name": "Create press release draft",
+      "type": "n8n-nodes-marcomm.marcomm",
+      "typeVersion": 1,
+      "position": [480, 0]
+    },
+    {
+      "parameters": {
+        "resource": "pressRelease",
+        "operation": "requestApproval",
+        "pressReleaseId": "={{ $json.id }}",
+        "deadline": "={{ $now.plus({ days: 2 }).toISO() }}"
+      },
+      "id": "5a1c2f10-0000-4000-8000-000000000014",
+      "name": "Request approval",
+      "type": "n8n-nodes-marcomm.marcomm",
+      "typeVersion": 1,
+      "position": [720, 0]
+    }
+  ],
+  "connections": {
+    "When clicking Test workflow": { "main": [[{ "node": "Google Sheets", "type": "main", "index": 0 }]] },
+    "Google Sheets": { "main": [[{ "node": "Create press release draft", "type": "main", "index": 0 }]] },
+    "Create press release draft": { "main": [[{ "node": "Request approval", "type": "main", "index": 0 }]] }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "pinData": {},
+  "meta": {}
+}
