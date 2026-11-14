@@ -1,4 +1,6 @@
 # Publishes n8n-nodes-marcomm to npm with a provenance statement, using npm trusted publishing (OIDC, no token stored).
+# `npm run release-set` copies this file to .github/workflows of the public repository (it does nothing inside the Marcomm AI
+# monorepo, where GitHub only reads the root .github folder).
 # Run it from the Actions tab (Run workflow) after raising "version" in package.json, or push a tag such as v0.1.1.
 name: Publish to npm
 
