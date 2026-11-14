@@ -1,16 +1,16 @@
-# Publishes n8n-nodes-marcomm to npm with a provenance statement. `npm run release-set` copies this file to .github/workflows of the
-# public repository (it does nothing inside the Marcomm AI monorepo, where GitHub only reads the root .github folder).
-# Release: raise "version" in package.json, commit, then push a tag such as v0.1.0.
+# Publishes n8n-nodes-marcomm to npm with a provenance statement, using npm trusted publishing (OIDC, no token stored).
+# Run it from the Actions tab (Run workflow) after raising "version" in package.json, or push a tag such as v0.1.1.
 name: Publish to npm
 
 on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 permissions:
   contents: read
-  id-token: write # provenance
+  id-token: write # trusted publishing and provenance
 
 jobs:
   publish:
@@ -21,12 +21,13 @@ jobs:
         with:
           node-version: 22
           registry-url: https://registry.npmjs.org
+      - name: Use an npm version that supports trusted publishing
+        run: npm install -g npm@^11.5.1
       - run: npm ci
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run build
       - name: Tag matches package.json
+        if: startsWith(github.ref, 'refs/tags/v')
         run: test "v$(node -p "require('./package.json').version")" = "${GITHUB_REF_NAME}"
       - run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
