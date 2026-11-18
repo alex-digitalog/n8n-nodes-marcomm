@@ -39,6 +39,28 @@ Writing, sending and deciding need a personal key, because the action is recorde
 
 Input fields match the request bodies in the API reference. Fields such as SEO keywords, `To` and `CC` take comma separated text. Dates without a time zone offset are read in the workflow time zone and sent in UTC.
 
+## Usage example
+
+Two workflows are ready to import from the [`examples` folder](https://github.com/alex-digitalog/n8n-nodes-marcomm/tree/main/examples) of the public repository (in n8n use **Import from File** on a new workflow, then pick your credential):
+
+- `rows-to-press-release-approval.json`: a spreadsheet row becomes a press release draft and goes to approval.
+- `slack-on-published-press-release.json`: a Slack message when a press release is published.
+
+### From a spreadsheet row to an approval request
+
+1. Add a **Google Sheets** node that reads rows with the columns `Title` and `Body`.
+2. Add a **Marcomm AI** node. Set **Resource** to *Press Release* and **Operation** to *Create*. Set **Title** to `{{ $json.Title }}` and **Body** to `{{ $json.Body }}`. Under **Additional Fields** set **Language** to `en`. The node returns the new draft, including its `id`.
+3. Add a second **Marcomm AI** node. Set **Resource** to *Press Release* and **Operation** to *Request Approval*. Set **Press Release ID** to `{{ $json.id }}` and **Deadline** to `{{ $now.plus({ days: 2 }).toISO() }}`.
+4. Run the workflow. The draft appears in the newsroom list in Marcomm AI with status *In review*, and the people on the approval chain are notified. The key needs the `content:write` scope.
+
+Nothing is published until a person approves. The *Publish to Newsroom* and *Send by Email* operations cannot be undone, so add them only after you are sure the workflow is right.
+
+### Start a workflow when a press release is published
+
+1. Add a **Marcomm AI Trigger** node and set **Event** to *Press Release Published*. Leave the poll interval at 5 minutes or change it. The key needs the `content` scope.
+2. Connect any node you like, for example **Slack** with the message `Published: {{ $json.title }}`.
+3. Activate the workflow. The first check only records what exists, so old items do not trigger it. Each press release published after that starts one execution.
+
 ### License
 
 MIT. See [LICENSE](LICENSE).
