@@ -11,6 +11,7 @@ import {
 } from 'n8n-workflow';
 import { MARCOMM_API_URL } from '../Marcomm/Marcomm.node';
 import { collectPages, PAGE_SIZE } from '../Marcomm/shared/pagination';
+import { describeApiError } from '../Marcomm/shared/request';
 import { baseline, eventByValue, EVENTS, POLL_MAX_PAGES, processRows, type PollState, type Row } from './poll';
 
 export class MarcommTrigger implements INodeType {
@@ -72,7 +73,10 @@ export class MarcommTrigger implements INodeType {
         listMeta.next = res.meta?.next_cursor ?? null;
         return Array.isArray(res.data) ? res.data : [];
       } catch (error) {
-        throw new NodeApiError(this.getNode(), error as JsonObject);
+        const failed = error as { httpCode?: string; statusCode?: number; response?: { body?: unknown; status?: number }; context?: { data?: unknown } };
+        const status = Number(failed.httpCode ?? failed.statusCode ?? failed.response?.status ?? 0);
+        const { message, description } = describeApiError(status, failed.response?.body ?? failed.context?.data);
+        throw new NodeApiError(this.getNode(), error as JsonObject, status ? { message, description, httpCode: String(status) } : {});
       }
     };
     const paged = (qs: IDataObject, max?: number) =>

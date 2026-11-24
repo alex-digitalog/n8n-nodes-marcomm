@@ -35,6 +35,8 @@ Set **Authentication** to **OAuth2** on the node and create a **Marcomm AI OAuth
 
 A workspace admin can switch the app off in Settings > API at any time.
 
+When a call fails the node shows the API error code, its message and what to do next, for example `Marcomm AI (scope_denied)` when the key or OAuth app lacks a scope.
+
 Writing, sending and deciding need a personal key, because the action is recorded under the person who created the key. The permissions of that person in the workspace apply: a key never does more than its owner may do in the app. Calls count against the rate limits set for the workspace (the node shows the API error when a limit is reached).
 
 ## Marcomm AI node
