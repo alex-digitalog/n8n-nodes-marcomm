@@ -25,6 +25,16 @@ In n8n, open **Settings > Community Nodes**, choose **Install**, enter `n8n-node
 | `distribution` | Publish to the newsroom and blog, email press releases and RSVP invitations |
 | `approvals` | Approve or reject, list what waits for a decision |
 
+### Sign in with OAuth instead of a key
+
+Set **Authentication** to **OAuth2** on the node and create a **Marcomm AI OAuth2 API** credential.
+
+1. In Marcomm AI open **Settings > API**, scroll to **OAuth apps** and create an app. Paste the redirect address n8n shows on the credential (n8n Cloud uses `https://oauth.n8n.cloud/oauth2/callback`).
+2. Copy the client ID and the client secret (shown once) into the n8n credential, keep the **Scope** you need, and press **Connect**.
+3. Allow the app on the Marcomm AI screen that opens. The node then acts as you, with the same permissions as a personal key.
+
+A workspace admin can switch the app off in Settings > API at any time.
+
 Writing, sending and deciding need a personal key, because the action is recorded under the person who created the key. The permissions of that person in the workspace apply: a key never does more than its owner may do in the app. Calls count against the rate limits set for the workspace (the node shows the API error when a limit is reached).
 
 ## Marcomm AI node

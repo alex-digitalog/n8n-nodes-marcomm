@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-marcomm",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "n8n community nodes for Marcomm AI: write and publish press releases, blog posts, press events and RSVP invitations, and trigger workflows when they change.",
   "keywords": [
     "n8n-community-node-package",
@@ -37,7 +37,8 @@
     "n8nNodesApiVersion": 1,
     "strict": true,
     "credentials": [
-      "dist/credentials/MarcommApi.credentials.js"
+      "dist/credentials/MarcommApi.credentials.js",
+      "dist/credentials/MarcommOAuth2Api.credentials.js"
     ],
     "nodes": [
       "dist/nodes/Marcomm/Marcomm.node.js",

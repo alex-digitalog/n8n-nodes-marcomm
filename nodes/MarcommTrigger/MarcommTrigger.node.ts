@@ -26,8 +26,22 @@ export class MarcommTrigger implements INodeType {
     polling: true,
     inputs: [],
     outputs: [NodeConnectionTypes.Main],
-    credentials: [{ name: 'marcommApi', required: true }],
+    credentials: [
+      { name: 'marcommApi', required: true, displayOptions: { show: { authentication: ['apiKey'] } } },
+      { name: 'marcommOAuth2Api', required: true, displayOptions: { show: { authentication: ['oAuth2'] } } },
+    ],
     properties: [
+      {
+        displayName: 'Authentication',
+        name: 'authentication',
+        type: 'options',
+        noDataExpression: true,
+        default: 'apiKey',
+        options: [
+          { name: 'API Key', value: 'apiKey' },
+          { name: 'OAuth2', value: 'oAuth2' },
+        ],
+      },
       {
         displayName: 'Event',
         name: 'event',
@@ -36,7 +50,7 @@ export class MarcommTrigger implements INodeType {
         options: EVENTS.map((e) => ({ name: e.name, value: e.value, description: e.description })),
       },
       {
-        displayName: 'The key needs the content scope. The trigger checks for changes on the polling interval and sends nothing on the first check.',
+        displayName: 'The key or OAuth app needs the content scope. The trigger checks for changes on the polling interval and sends nothing on the first check.',
         name: 'pollNotice',
         type: 'notice',
         default: '',
@@ -51,7 +65,7 @@ export class MarcommTrigger implements INodeType {
     const listMeta: { next: string | null } = { next: null };
     const list = async (qs: IDataObject): Promise<Row[]> => {
       try {
-        const res = (await this.helpers.httpRequestWithAuthentication.call(this, 'marcommApi', { method: 'GET', baseURL: MARCOMM_API_URL, url: `/${event.resource}`, qs, json: true })) as {
+        const res = (await this.helpers.httpRequestWithAuthentication.call(this, this.getNodeParameter('authentication', 'apiKey') === 'oAuth2' ? 'marcommOAuth2Api' : 'marcommApi', { method: 'GET', baseURL: MARCOMM_API_URL, url: `/${event.resource}`, qs, json: true })) as {
           data?: Row[];
           meta?: { next_cursor?: string | null };
         };

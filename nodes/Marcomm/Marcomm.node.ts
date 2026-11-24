@@ -22,12 +22,26 @@ export class Marcomm implements INodeType {
     usableAsTool: true,
     inputs: [NodeConnectionTypes.Main],
     outputs: [NodeConnectionTypes.Main],
-    credentials: [{ name: 'marcommApi', required: true }],
+    credentials: [
+      { name: 'marcommApi', required: true, displayOptions: { show: { authentication: ['apiKey'] } } },
+      { name: 'marcommOAuth2Api', required: true, displayOptions: { show: { authentication: ['oAuth2'] } } },
+    ],
     requestDefaults: {
       baseURL: MARCOMM_API_URL,
       headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
     },
     properties: [
+      {
+        displayName: 'Authentication',
+        name: 'authentication',
+        type: 'options',
+        noDataExpression: true,
+        default: 'apiKey',
+        options: [
+          { name: 'API Key', value: 'apiKey' },
+          { name: 'OAuth2', value: 'oAuth2' },
+        ],
+      },
       {
         displayName: 'Resource',
         name: 'resource',
